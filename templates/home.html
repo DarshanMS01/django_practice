@@ -1,0 +1,103 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Django Employee Directory</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <div class="header-bar">
+        <h2>
+            Employee Records - Tech With Darshan
+        </h2>
+
+        <div class="auth-controls">
+            {% if user.is_authenticated %}
+                <span class="welcome-msg">Welcome, {{ user.username }}</span>
+                <form method="post" action="{% url 'logout' %}" class="auth-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-auth btn-logout">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-auth btn-login">Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="site-messages">
+            {% for message in messages %}
+                <p class="{% if message.tags == 'error' %}form-error{% else %}form-success{% endif %}">{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <a href="{% url 'add_employee' %}" style="float: right; margin-right: 200px;">Add Employee</a>
+
+<br><br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Salary</th>
+                <th>Designation</th>
+                <th>Department</th>
+                <th>Active</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.id }}</td>
+                <td>{{ employee.first_name }}</td>
+                <td>{{ employee.last_name }}</td>
+                <td>{{ employee.email }}</td>
+                <td>{{ employee.salary }}</td>
+                <td>{{ employee.designation }}</td>
+                <td>{{ employee.department }}</td>
+                <td>{{ employee.is_active }}</td>
+
+                <td>
+                    <div>
+                        <!-- View employee details -->
+                        <a href="{% url 'employee_detail' employee.id %}">
+                            <i class="fa fa-eye"></i>
+                        </a>
+
+                        <!-- Edit (to implement later) -->
+                        <a href="#" title="Edit">
+                            <i class="fa fa-edit"></i>
+                        </a>
+
+                        <!-- Delete (to implement later) -->
+                        <a href="#" title="Delete">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9">No employee records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
