@@ -4,24 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="theme-color" content="#f5f7fb">
     <title>Login - Django Employee Directory</title>
-
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-
 <body class="login-body">
-
-    <div class="login-card">
-        <h2>Login</h2>
+    <main class="login-card">
+        <p class="login-eyebrow">EMPLOYEE DIRECTORY</p>
+        <h1>Welcome back</h1>
+        <p class="login-intro">Sign in to continue to your account.</p>
 
         {% if error %}
-            <p class="form-error">{{ error }}</p>
+            <p class="form-error" role="alert">{{ error }}</p>
         {% endif %}
 
         {% if messages %}
             {% for message in messages %}
-                <p class="form-success">{{ message }}</p>
+                <p class="form-success" role="status">{{ message }}</p>
             {% endfor %}
         {% endif %}
 
@@ -34,13 +33,10 @@
             <label for="id_password">Password</label>
             {{ form.password }}
 
-            <button type="submit">Login</button>
+            <button type="submit">Sign in</button>
         </form>
 
-        <p class="login-links">
-            Don't have an account? <a href="{% url 'register' %}">Register here</a>
-        </p>
-    </div>
-
+        <p class="login-links">Don't have an account? <a href="{% url 'register' %}">Create one</a></p>
+    </main>
 </body>
 </html>
