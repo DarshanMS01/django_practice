@@ -1,103 +1,89 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Django Employee Directory</title>
-
+    <meta name="theme-color" content="#f5f7fb">
+    <title>Dashboard - Employee Directory</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-
-<body>
-
-    <div class="header-bar">
-        <h2>
-            Employee Records - Tech With Darshan
-        </h2>
-
-        <div class="auth-controls">
+<body class="dashboard-body">
+    <aside class="dashboard-sidebar">
+        <a class="dashboard-brand" href="{% url 'home' %}"><span class="brand-mark"><i class="fa fa-users" aria-hidden="true"></i></span><span>People<span class="brand-accent">Desk</span></span></a>
+        <p class="sidebar-label">WORKSPACE</p>
+        <nav class="dashboard-nav" aria-label="Main navigation">
+            <a class="nav-item active" href="{% url 'home' %}"><i class="fa fa-th-large" aria-hidden="true"></i> Dashboard</a>
+            <a class="nav-item" href="#employees"><i class="fa fa-address-book-o" aria-hidden="true"></i> Employees</a>
             {% if user.is_authenticated %}
-                <span class="welcome-msg">Welcome, {{ user.username }}</span>
-                <form method="post" action="{% url 'logout' %}" class="auth-form">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-auth btn-logout">Logout</button>
-                </form>
+                <a class="nav-item" href="{% url 'add_employee' %}"><i class="fa fa-user-plus" aria-hidden="true"></i> Add employee</a>
+            {% endif %}
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="sidebar-note"><span class="note-icon"><i class="fa fa-lightbulb-o" aria-hidden="true"></i></span><strong>People first</strong><p>A clear view of your employee directory, all in one place.</p></div>
+            {% if user.is_authenticated %}
+                <div class="sidebar-user"><span class="avatar">{{ user.username|first|upper }}</span><span class="sidebar-user-name">{{ user.username }}<small>Signed in</small></span></div>
             {% else %}
-                <a href="{% url 'login' %}" class="btn-auth btn-login">Login</a>
+                <div class="sidebar-user"><span class="avatar"><i class="fa fa-user" aria-hidden="true"></i></span><span class="sidebar-user-name">Guest<small>Welcome</small></span></div>
             {% endif %}
         </div>
-    </div>
+    </aside>
 
-    {% if messages %}
-        <div class="site-messages">
-            {% for message in messages %}
-                <p class="{% if message.tags == 'error' %}form-error{% else %}form-success{% endif %}">{{ message }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <main class="dashboard-main">
+        <header class="dashboard-topbar">
+            <div class="mobile-brand"><span class="brand-mark"><i class="fa fa-users" aria-hidden="true"></i></span> People<span class="brand-accent">Desk</span></div>
+            <div class="breadcrumb">Workspace <span>/</span> <strong>Dashboard</strong></div>
+            <div class="topbar-actions">
+                {% if user.is_authenticated %}
+                    <span class="welcome-msg">Welcome, {{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}" class="auth-form"><input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"><button type="submit" class="topbar-link">Log out</button></form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="topbar-link">Log in</a>
+                    <a href="{% url 'register' %}" class="dashboard-button">Sign up</a>
+                {% endif %}
+            </div>
+        </header>
 
-    <a href="{% url 'add_employee' %}" style="float: right; margin-right: 200px;">Add Employee</a>
+        {% if messages %}
+            <div class="site-messages">{% for message in messages %}<p class="{% if message.tags == 'error' %}form-error{% else %}form-success{% endif %}" role="status">{{ message }}</p>{% endfor %}</div>
+        {% endif %}
 
-<br><br>
+        <section class="dashboard-content">
+            <div class="dashboard-heading">
+                <div><p class="page-eyebrow">OVERVIEW</p><h1>Dashboard</h1><p class="page-subtitle">Here’s what’s happening with your team.</p></div>
+                {% if user.is_authenticated %}<a href="{% url 'add_employee' %}" class="dashboard-button"><i class="fa fa-plus" aria-hidden="true"></i> Add employee</a>{% endif %}
+            </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Salary</th>
-                <th>Designation</th>
-                <th>Department</th>
-                <th>Active</th>
-                <th>Action</th>
-            </tr>
-        </thead>
+            <div class="stat-grid" aria-label="Employee statistics">
+                <article class="stat-card"><div class="stat-card-top"><span>Total employees</span><span class="stat-icon stat-icon-blue"><i class="fa fa-users" aria-hidden="true"></i></span></div><strong class="stat-number">{{ total_employees }}</strong><span class="stat-caption">In your directory</span></article>
+                <article class="stat-card"><div class="stat-card-top"><span>Active employees</span><span class="stat-icon stat-icon-green"><i class="fa fa-check" aria-hidden="true"></i></span></div><strong class="stat-number">{{ active_employees }}</strong><span class="stat-caption">Currently active</span></article>
+                <article class="stat-card"><div class="stat-card-top"><span>Inactive employees</span><span class="stat-icon stat-icon-amber"><i class="fa fa-pause" aria-hidden="true"></i></span></div><strong class="stat-number">{{ inactive_employees }}</strong><span class="stat-caption">Not currently active</span></article>
+                <article class="stat-card"><div class="stat-card-top"><span>Departments</span><span class="stat-icon stat-icon-purple"><i class="fa fa-building-o" aria-hidden="true"></i></span></div><strong class="stat-number">{{ total_departments }}</strong><span class="stat-caption">Across your organization</span></article>
+            </div>
 
-        <tbody>
-            {% for employee in employees %}
-            <tr>
-                <td>{{ employee.id }}</td>
-                <td>{{ employee.first_name }}</td>
-                <td>{{ employee.last_name }}</td>
-                <td>{{ employee.email }}</td>
-                <td>{{ employee.salary }}</td>
-                <td>{{ employee.designation }}</td>
-                <td>{{ employee.department }}</td>
-                <td>{{ employee.is_active }}</td>
-
-                <td>
-                    <div>
-                        <!-- View employee details -->
-                        <a href="{% url 'employee_detail' employee.id %}">
-                            <i class="fa fa-eye"></i>
-                        </a>
-
-                        <!-- Edit (to implement later) -->
-                        <a href="#" title="Edit">
-                            <i class="fa fa-edit"></i>
-                        </a>
-
-                        <!-- Delete (to implement later) -->
-                        <a href="#" title="Delete">
-                            <i class="fa fa-trash"></i>
-                        </a>
-                    </div>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="9">No employee records found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
+            <section class="employee-panel" id="employees">
+                <div class="panel-heading"><div><h2>Recent employees</h2><p>Your latest employee directory records</p></div><span class="record-count">{{ total_employees }} total</span></div>
+                <div class="table-scroll"><table class="dashboard-table">
+                    <thead><tr><th>EMPLOYEE</th><th>DEPARTMENT</th><th>DESIGNATION</th><th>STATUS</th><th></th></tr></thead>
+                    <tbody>
+                        {% for employee in employees %}
+                        <tr>
+                            <td><div class="employee-cell"><span class="employee-avatar">{{ employee.first_name|first|upper }}{{ employee.last_name|first|upper }}</span><span class="employee-name">{{ employee.full_name }}<small>{{ employee.email }}</small></span></div></td>
+                            <td>{{ employee.department.name|default:"Unassigned" }}</td>
+                            <td>{{ employee.designation }}</td>
+                            <td>{% if employee.is_active %}<span class="status-pill status-active"><span></span> Active</span>{% else %}<span class="status-pill status-inactive"><span></span> Inactive</span>{% endif %}</td>
+                            <td><a class="row-action" href="{% url 'employee_detail' employee.id %}" aria-label="View {{ employee.full_name }}"><i class="fa fa-arrow-right" aria-hidden="true"></i></a></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="empty-state"><span class="empty-icon"><i class="fa fa-address-book-o" aria-hidden="true"></i></span><strong>No employees yet</strong><span>Add an employee to start building your directory.</span>{% if user.is_authenticated %}<a href="{% url 'add_employee' %}" class="dashboard-button">Add your first employee</a>{% endif %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table></div>
+                {% if total_employees > 8 %}<p class="table-footnote">Showing the 8 most recently added employees.</p>{% endif %}
+            </section>
+            <footer class="dashboard-footer">PeopleDesk <span>·</span> Employee directory</footer>
+        </section>
+    </main>
 </body>
 </html>
