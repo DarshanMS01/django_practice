@@ -41,7 +41,7 @@
 
         <section class="dashboard-content">
             <div class="dashboard-heading">
-                <div><p class="page-eyebrow">OVERVIEW</p><h1>Dashboard</h1><p class="page-subtitle">Here’s what’s happening with your team.</p></div>
+                <div><p class="page-eyebrow">OVERVIEW</p><h1>Dashboard</h1><p class="page-subtitle">Here's what's happening with your team.</p></div>
                 {% if user.is_authenticated %}<a href="{% url 'add_employee' %}" class="dashboard-button"><i class="fa fa-plus" aria-hidden="true"></i> Add employee</a>{% endif %}
             </div>
             <div class="stat-grid" aria-label="Employee statistics">

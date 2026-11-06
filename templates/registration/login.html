@@ -9,34 +9,44 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body class="login-body">
-    <main class="login-card">
-        <p class="login-eyebrow">EMPLOYEE DIRECTORY</p>
-        <h1>Welcome back</h1>
-        <p class="login-intro">Sign in to continue to your account.</p>
 
-        {% if error %}
-            <p class="form-error" role="alert">{{ error }}</p>
-        {% endif %}
+    <div class="login-container">
+        <!-- Left panel: illustration -->
+        <div class="login-illustration">
+            <img src="{% static 'images/login-illustration.svg' %}" alt="Employee Directory Illustration">
+        </div>
 
-        {% if messages %}
-            {% for message in messages %}
-                <p class="form-success" role="status">{{ message }}</p>
-            {% endfor %}
-        {% endif %}
+        <!-- Right panel: login form -->
+        <main class="login-card">
+            <p class="login-eyebrow">EMPLOYEE DIRECTORY</p>
+            <h1>Welcome back</h1>
+            <p class="login-intro">Sign in to continue to your account.</p>
 
-        <form method="post" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">
-            {% csrf_token %}
+            {% if error %}
+                <p class="form-error" role="alert">{{ error }}</p>
+            {% endif %}
 
-            <label for="id_username">Username</label>
-            {{ form.username }}
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="form-success" role="status">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
 
-            <label for="id_password">Password</label>
-            {{ form.password }}
+            <form method="post" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">
+                {% csrf_token %}
 
-            <button type="submit">Sign in</button>
-        </form>
+                <label for="id_username">Username</label>
+                {{ form.username }}
 
-        <p class="login-links">Don't have an account? <a href="{% url 'register' %}">Create one</a></p>
-    </main>
+                <label for="id_password">Password</label>
+                {{ form.password }}
+
+                <button type="submit">Sign in</button>
+            </form>
+
+            <p class="login-links">Don't have an account? <a href="{% url 'register' %}">Create one</a></p>
+        </main>
+    </div>
+
 </body>
 </html>
